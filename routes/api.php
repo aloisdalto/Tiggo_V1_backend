@@ -13,11 +13,6 @@ use App\Http\Controllers\Api\AdminController;
 |--------------------------------------------------------------------------
 | API Routes
 |--------------------------------------------------------------------------
-|
-| Here is where you can register API routes for your application. These
-| routes are loaded by the RouteServiceProvider within a group which
-| is assigned the "api" middleware group. Enjoy building your API!
-|
 */
 
 // Rutas públicas
@@ -25,22 +20,29 @@ Route::post('register', [AuthController::class, 'register']);
 Route::post('login', [AuthController::class, 'login']);
 Route::get('services', [ServiceController::class, 'index']);
 
-// Rutas autenticadas
+// Rutas autenticadas (Clientes y Técnicos)
 Route::middleware('auth:sanctum')->group(function () {
     Route::post('logout', [AuthController::class, 'logout']);
     Route::get('profile', [UserController::class, 'profile']);
     Route::put('profile', [UserController::class, 'updateProfile']);
+    
+    // --- GESTIÓN DE SOLICITUDES (Compartida) ---
     Route::get('service-requests', [ServiceRequestController::class, 'index']);
     Route::post('service-requests', [ServiceRequestController::class, 'store']);
+    
+    // ¡MOVIDO AQUÍ! Ahora el Cliente puede entrar para Cancelar
+    // El controlador se encarga de validar quién puede hacer qué.
+    Route::patch('service-requests/{serviceRequest}/status', [ServiceRequestController::class, 'updateStatus']);
+
     Route::post('ratings', [RatingController::class, 'store']);
     Route::get('ratings/technician/{technicianId}', [RatingController::class, 'indexByTechnician']);
 });
 
-// Rutas para técnicos
+// Rutas EXCLUSIVAS para técnicos
 Route::middleware(['auth:sanctum', 'role:tecnico'])->group(function () {
     Route::get('technicians', [TechnicianController::class, 'index']);
     Route::get('technician/service-requests', [ServiceRequestController::class, 'index']);
-    Route::patch('service-requests/{serviceRequest}/status', [ServiceRequestController::class, 'updateStatus']);
+    // La ruta updateStatus se movió arriba para permitir acceso a clientes
 });
 
 // Rutas para administradores

@@ -30,7 +30,7 @@ class ServiceRequest extends Model
         return $this->belongsTo(Service::class);
     }
 
-    public function ratingRelation()
+    public function rating()
     {
         return $this->hasOne(Rating::class);
     }
