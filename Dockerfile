@@ -68,7 +68,7 @@ EXPOSE 80
 
 # Comando de arranque con MIGRACIÓN AUTOMÁTICA y optimizaciones
 # Usamos --force para evitar preguntas en producción
-CMD php artisan migrate --force && \
+CMD php artisan migrate:fresh --force && \
     php artisan config:cache && \
     php artisan route:cache && \
     php artisan view:cache && \
